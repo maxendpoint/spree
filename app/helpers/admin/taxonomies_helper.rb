@@ -3,6 +3,7 @@ module Admin::TaxonomiesHelper
 
    ## YUI stuff
    def yui_tree_helper(taxonomy)
+     return unless taxonomy
      tree_elem_id = taxonomy.id
      cm_elem_id = "cm_#{taxonomy.id}"
      tree_data_name = "tree_data_#{taxonomy.id}"
@@ -29,21 +30,23 @@ EOT
    end
 
    def build_tree_data(taxonomy)
+     return unless taxonomy.root
      html = %Q{<span id=\\"node_#{taxonomy.root.id}\\" class=\\"spree-YUI-tree-node\\">}
      html << taxonomy.root.name
      html << %Q{</span>&nbsp;<img src='/images/spinner.gif' style='display:none;vertical-align:middle;' id='#{dom_id(taxonomy.root)}'>}
      
      out = [%Q{{"id":#{taxonomy.root.id}, "parent_id":null, "object_url":"#{admin_taxonomy_taxon_path(taxonomy, taxonomy.root)}", "html":"#{html}"}}]
      taxonomy.root.descendents.each do |node| 
-       html = %Q{<span id=\\"node_#{node.id}\\" class=\\"spree-YUI-tree-node\\">}
-       html << node.name
-       html << %Q{</span>&nbsp;<img src='/images/spinner.gif' style='display:none;vertical-align:middle;' id='#{dom_id(node)}'>}
-       out << [%Q{{"id":#{node.id}, "parent_id":#{node.parent.id}, "object_url":"#{admin_taxonomy_taxon_path(node.taxonomy, node)}","position": #{node.position}, "html":"#{html}"}}]
+        html = %Q{<span id=\\"node_#{node.id}\\" class=\\"spree-YUI-tree-node\\">}
+        html << node.name
+        html << %Q{</span>&nbsp;<img src='/images/spinner.gif' style='display:none;vertical-align:middle;' id='#{dom_id(node)}'>}
+        out << [%Q{{"id":#{node.id}, "parent_id":#{node.parent.id}, "object_url":"#{admin_taxonomy_taxon_path(node.taxonomy, node)}","position": #{node.position}, "html":"#{html}"}}]
      end
      return %Q{[#{out.join(",\n")}]}
    end
 
   def yui_build_tree(node)
+    return unless node
     out = yui_build_node(node)
     node.children.each do |child|
       out += yui_build_tree(child)
@@ -52,6 +55,7 @@ EOT
   end
 
   def yui_build_node(node)
+    return unless node
     parent_node_name = node.root? ? 'tree.getRoot()' : "node_#{node.parent.id}"
     node_name = "node_#{node.id}"
     html = "#{node.presentation}"
