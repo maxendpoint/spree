@@ -4,25 +4,27 @@
     <th><%= t('description') %></th>
     <th><%= t('value') %></th>
   </tr>
-  <% option_values.each do |option_value| %>
+  <% options.each do |option| 
+     option_value = option_values.select { |v| v.gateway_option_id == option.id }.first
+  %>
   <tr>
-    <td><%=option_value.gateway_option.name%></td>
-    <td><%=option_value.gateway_option.description%></td>
+    <td><%=option.name%></td>
+    <td><%=option.description%></td>
     <td>
-      <% if option_value.gateway_option.textarea %>
-        <textarea name="option[<%=option_value.gateway_option.id%>]" 
+      <% if option.textarea %>
+        <textarea name="option[<%=option.id%>]" 
                   rows="5" 
-                  cols="26"><%= option_value.value %></textarea>
+                  cols="26"><%= (option_value.nil? ? '' : option_value.value) %></textarea>
       <% else %>
         <input type="text" 
                size="26"
-               name="option[<%=option_value.gateway_option.id%>]" 
-               value="<%= option_value.value %>" style="width: 228px"/>
+               name="option[<%=option.id%>]" 
+               value="<%= (option_value.nil? ? '' : option_value.value) %>" style="width: 228px"/>
       <% end %>
     </td>
   </tr>
   <% end %>
-  <% if option_values.empty? %>
+  <% if options.empty? %>
     <tr><td colspan="3"><%= t('none') %>.</td></tr>
   <% end%>
 </table>

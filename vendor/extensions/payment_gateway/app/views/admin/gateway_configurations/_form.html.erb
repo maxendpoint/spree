@@ -9,7 +9,11 @@
 
 <div id="config-options">
   <%= render :partial => "admin/gateway_option_values/options", 
-             :locals => {:option_values => @gateway_configuration.gateway_option_values} %>
+             :locals => {
+               :option_values => @gateway_configuration.gateway_option_values,
+               :options => @gateway_configuration.gateway.gateway_options
+             }
+                 %>
 </div>  
 
 <%= observe_field :gateway, 
