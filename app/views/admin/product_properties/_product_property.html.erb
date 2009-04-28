@@ -1,17 +1,10 @@
 <% number ||= 0 %>
 <tr class="product_property">
   <td>
-    <%= text_field_with_auto_complete :product_property, 
-                                      :property_name,
-                                      {:onkeypress => "return event.which == Event.KEY_RETURN ? false : true",
-                                       :autocomplete => "off",
-                                       :name => property_fu_name(product_property, number),
-                                       :value => product_property.property ? product_property.property.name : ""
-                                      },
-                                      {:url => filtered_admin_properties_url,
-                                       :method => :get,
-                                       :with => "Object.toQueryString({q: element.value})" 
-                                      } %>  
+    <%= select_tag :property_name, 
+            options_from_collection_for_select(Property.find(:all, :order => 'name'), :name, :name, (product_property.property ? product_property.property.name : '')),
+          :onselect => "return event.which == Event.KEY_RETURN ? false : true",
+          :name => property_fu_name(product_property, number)
   </td>
   <td>
     <%= text_field :product_property, :property_value, {
