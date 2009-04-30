@@ -2,6 +2,7 @@ module Spree #:nodoc:
   class SalesTaxCalculator
 
     def self.calculate_tax(order, rates) 
+
       return 0 if rates.empty?
       # note: there is a bug with associations in rails 2.1 model caching so we're using this hack
       # (see http://rails.lighthouseapp.com/projects/8994/tickets/785-caching-models-fails-in-development)
@@ -16,14 +17,19 @@ module Spree #:nodoc:
         taxable_totals[tax_category] ||= 0        
         taxable_totals[tax_category] += line_item.total
       end
+  
+      shipment_total = order.ship_amount if Spree::Tax::Config[:shipping_taxable]
+      shipment_total ||= 0
 
-      return 0 if taxable_totals.empty?
       tax = 0
       rates.each do |rate|
-        tax_category = rate.tax_category unless cache_hack
-        tax_category = TaxCategory.find(rate.tax_category_id) if cache_hack
-        next unless taxable_total = taxable_totals[tax_category]   
-        tax += taxable_total * rate.amount
+        tax += shipment_total * rate.amount
+        unless taxable_totals.empty?
+          tax_category = rate.tax_category unless cache_hack
+          tax_category = TaxCategory.find(rate.tax_category_id) if cache_hack
+          next unless taxable_total = taxable_totals[tax_category]   
+          tax += taxable_total * rate.amount
+        end
       end
       tax
     end
