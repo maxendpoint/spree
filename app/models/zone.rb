@@ -29,8 +29,10 @@ class Zone < ActiveRecord::Base
     # NOTE: This is complicated by the fact that include? for HMP is broken in Rails 2.1 (so we use awkward index method)
     case self.kind
     when "country"
+      return false if address.country.nil?
       return members.select { |zone_member| zone_member.zoneable == address.country }.any?
     when "state"
+      return false if address.state.nil?
       return members.select { |zone_member| zone_member.zoneable == address.state }.any?
       #members.index(address.state).respond_to?(:integer?)
     end
