@@ -42,6 +42,6 @@ class Shipment < ActiveRecord::Base
   
   def recalculate_tax
     return unless order && order.respond_to?(:calculate_tax)      
-    order.update_attribute("tax_amount", order.calculate_tax)
+    order.update_totals
   end
 end
