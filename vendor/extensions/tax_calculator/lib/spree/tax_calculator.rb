@@ -11,6 +11,8 @@ module Spree #:nodoc:
       # both a sales tax and vat if you wanted to do that for some reason
       sales_tax = Spree::SalesTaxCalculator.calculate_tax(self, sales_tax_rates)
       vat_tax = Spree::VatCalculator.calculate_tax(self, vat_rates)
+
+#      logger.warn("--- calculate_tax: ship_amount=%f, sales_tax=%f" % [self.ship_amount, sales_tax])
       
       sales_tax + vat_tax
     end

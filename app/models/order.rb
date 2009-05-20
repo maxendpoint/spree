@@ -82,6 +82,14 @@ class Order < ActiveRecord::Base
     return false if state_events.empty? || state_events.last.previous_state.nil?
     true
   end
+
+  def allow_authorize?(creditcard=nil)
+  #TODO: This should likely also check either for existing auths or state
+
+#    logger.debug("--- allow_authorize? (checkout_complete=%d)" % checkout_complete)
+    return false if checkout_complete
+    return true
+  end
   
   def allow_pay?
     checkout_complete
@@ -92,7 +100,7 @@ class Order < ActiveRecord::Base
     if current_item
       current_item.increment_quantity unless quantity > 1
       current_item.quantity = (current_item.quantity + quantity) if quantity > 1
-      current_item.save
+      current_item.save!
     else
       current_item = LineItem.new(:quantity => quantity, :variant => variant, :price => variant.price)
       self.line_items << current_item
@@ -187,7 +195,7 @@ class Order < ActiveRecord::Base
       OrderMailer.deliver_confirm(self)
     end   
     update_totals
-    save
+    save!
   end   
   
   def cancel_order

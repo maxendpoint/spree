@@ -24,7 +24,7 @@ class OrdersController < Spree::BaseController
       @order.add_variant(Variant.find(variant_id), quantity) if quantity > 0
     end if params[:variants]
     
-    @order.save
+    @order.save!
     
     # store order token in the session
     session[:order_token] = @order.token
@@ -71,7 +71,10 @@ class OrdersController < Spree::BaseController
   
   def prevent_editing_complete_order      
     load_object
-    redirect_to object_url if @order.checkout_complete
+    if @order.checkout_complete
+      flash[:notice] = "Duplicate processing attempt, order already processed successfully!"
+      redirect_to object_url 
+    end
   end         
   
   def load_data     
