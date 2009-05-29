@@ -5,6 +5,7 @@
             options_from_collection_for_select(Property.find(:all, :order => 'name'), :name, :name, (product_property.property ? product_property.property.name : '')),
           :onselect => "return event.which == Event.KEY_RETURN ? false : true",
           :name => property_fu_name(product_property, number)
+      %>
   </td>
   <td>
     <%= text_field :product_property, :property_value, {
