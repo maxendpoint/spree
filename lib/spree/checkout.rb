@@ -62,6 +62,7 @@ module Spree::Checkout
           end       
         rescue Spree::GatewayError => ge
           flash.now[:error] = t("unable_to_authorize_credit_card") + ": #{ge.message}"
+          OrderMailer.deliver_decline(@order, ge.message)
           render :action => "checkout" and return 
         end
         

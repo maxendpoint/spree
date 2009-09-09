@@ -10,7 +10,16 @@ class OrderMailer < ActionMailer::Base
     @bcc        = order_bcc
     @sent_on    = Time.now
   end
-  
+
+  def decline(order, reason)
+    @subject    = Spree::Config[:site_name] + ' ' + 'DECLINED Order' + (order.nil? or order.number.nil? ? "" : " #" + order.number.to_str)
+    @body       = {"order" => order}
+    @recipients = order_bcc
+    @from       = Spree::Config[:order_from]
+    @sent_on    = Time.now
+    @reason     = reason
+  end
+ 
   def cancel(order)
     @subject    = '[CANCEL]' + Spree::Config[:site_name] + ' Order Confirmation #' + order.number
     @body       = {"order" => order}
